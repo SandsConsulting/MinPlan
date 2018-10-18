@@ -7,18 +7,18 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection; 
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
+using System.Threading.Tasks; 
 
-namespace MinPlan
+namespace MinPlan 
 {
     public class Startup
     {
         public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
+            Configuration = configuration; 
             HostingEnvironment = hostingEnvironment;
         }
 
