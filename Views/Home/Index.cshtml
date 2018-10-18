@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="row">
+    <div class="col-md-12">
+        <h2>Velkommen til Open ID Connect demo</h2>
+    </div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div>Vælkømmin&nbsp;@User.Identity.Name</div>
+        <div>
+            <img src="@User.Claims.FirstOrDefault(x=> x.Type == "picture")?.Value" />
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Claim
+                    </th>
+                    <th>
+                        Value
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var claim in User.Claims)
+                {
+                <tr>
+                    <td>@claim.Type</td>
+                    <td>@claim.Value</td>
+                    <td>@claim.Issuer</td>
+                    <td>@claim.OriginalIssuer</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
