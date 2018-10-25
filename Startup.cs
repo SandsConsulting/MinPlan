@@ -6,19 +6,21 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection; 
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks; 
+using System.Threading.Tasks;
 
-namespace MinPlan 
+namespace MinPlan
 {
     public class Startup
     {
         public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
-            Configuration = configuration; 
+            Configuration = configuration;
             HostingEnvironment = hostingEnvironment;
         }
 
@@ -52,13 +54,50 @@ namespace MinPlan
             //    options.Authority = Configuration["IdentityServer:Domain"];
             //    options.ClientId = Configuration["IdentityServer:ClientId"];
             //    options.ClientSecret = Configuration["IdentityServer:ClientSecret"];
-            //    options.ResponseType = "code id_token";
+            //    options.ResponseType = "code";
             //    options.Scope.Clear();
             //    options.Scope.Add("openid");
             //    options.Scope.Add("profile");
+            //    options.Scope.Add("email");
+            //    options.Scope.Add("role");
             //    options.CallbackPath = new PathString("/signin-oidc");
+            //    options.TokenValidationParameters.NameClaimType = "name";
+            //    options.TokenValidationParameters.RoleClaimType = "role";
             //    options.SaveTokens = true;
+            //    //options.GetClaimsFromUserInfoEndpoint = true;
+            //    options.Events.OnRemoteFailure = context =>
+            //    {
+            //        context.HandleResponse();
+            //        context.Response.Redirect("/");
+            //        return Task.FromResult<object>(null);
+            //    };
             //})
+
+            /*
+             * Idfy
+             */
+            .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+            {
+                options.RequireHttpsMetadata = HostingEnvironment.IsProduction();
+                options.Authority = Configuration["Idfy:Domain"];
+                options.ClientId = Configuration["Idfy:ClientId"];
+                options.ClientSecret = Configuration["Idfy:ClientSecret"];
+                options.ResponseType = "code id_token";
+                options.Scope.Clear();
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.CallbackPath = new PathString("/signin-oidc");
+                options.TokenValidationParameters.NameClaimType = "name";
+                options.TokenValidationParameters.RoleClaimType = "role";
+                options.SaveTokens = true;
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.Events.OnRemoteFailure = context =>
+                {
+                    context.HandleResponse();
+                    context.Response.Redirect("/");
+                    return Task.FromResult<object>(null);
+                };
+            })
 
             /*
             * AZURE AD
@@ -68,49 +107,47 @@ namespace MinPlan
             //    options.Authority = Configuration["AzureAD:Domain"];
             //    options.ClientId = Configuration["AzureAD:ClientId"];
             //    options.ClientSecret = Configuration["AzureAD:ClientSecret"];
-            //    options.ResponseType = "code";
+            //    options.ResponseType = OpenIdConnectResponseType.Code;
             //    options.Scope.Clear();
             //    options.Scope.Add("openid");
             //    options.Scope.Add("profile");
             //    options.CallbackPath = new PathString("/signin-oidc");
-            //    options.SaveTokens = true;
+            //    options.TokenValidationParameters.NameClaimType = "name";
             //})
 
             /*
              * AUTH0 
              */
-            .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-            {
-                options.Authority = Configuration["Auth0:Domain"];
-                options.ClientId = Configuration["Auth0:ClientId"];
-                options.ClientSecret = Configuration["Auth0:ClientSecret"];
-                options.ResponseType = "code";
-                options.Scope.Clear();
-                options.Scope.Add("openid");
-                options.Scope.Add("profile");
-                options.CallbackPath = new PathString("/signin-auth0");
-                options.SaveTokens = true;
-                options.Events = new OpenIdConnectEvents
-                {
-                    OnRedirectToIdentityProviderForSignOut = (context) =>
-                    {
-                        var logoutUri = $"{Configuration["Auth0:Domain"]}/v2/logout?client_id={Configuration["Auth0:ClientId"]}";
-                        var postLogoutUri = context.Properties.RedirectUri;
-                        if (!string.IsNullOrEmpty(postLogoutUri))
-                        {
-                            if (postLogoutUri.StartsWith("/"))
-                            {
-                                var request = context.Request;
-                                postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
-                            }
-                            logoutUri += $"&returnTo={ Uri.EscapeDataString(postLogoutUri)}";
-                        }
-                        context.Response.Redirect(logoutUri);
-                        context.HandleResponse();
-                        return Task.CompletedTask;
-                    }
-                };
-            })
+            //.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+            //{
+            //    options.Authority = Configuration["Auth0:Domain"];
+            //    options.ClientId = Configuration["Auth0:ClientId"];
+            //    options.ClientSecret = Configuration["Auth0:ClientSecret"];
+            //    options.ResponseType = "code";
+            //    options.Scope.Clear();
+            //    options.Scope.Add("openid");
+            //    options.Scope.Add("profile");
+            //    options.CallbackPath = new PathString("/signin-auth0");
+            //    options.TokenValidationParameters.NameClaimType = "name";
+            //    options.GetClaimsFromUserInfoEndpoint = true;
+            //    //options.Events.OnRedirectToIdentityProviderForSignOut = context =>
+            //    //    {
+            //    //        var logoutUri = $"{Configuration["Auth0:Domain"]}/v2/logout?client_id={Configuration["Auth0:ClientId"]}";
+            //    //        var postLogoutUri = context.Properties.RedirectUri;
+            //    //        if (!string.IsNullOrEmpty(postLogoutUri))
+            //    //        {
+            //    //            if (postLogoutUri.StartsWith("/"))
+            //    //            {
+            //    //                var request = context.Request;
+            //    //                postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
+            //    //            }
+            //    //            logoutUri += $"&returnTo={ Uri.EscapeDataString(postLogoutUri)}";
+            //    //        }
+            //    //        context.Response.Redirect(logoutUri);
+            //    //        context.HandleResponse();
+            //    //        return Task.CompletedTask;
+            //    //    };
+            //})
 
             .AddCookie();
 
@@ -125,7 +162,7 @@ namespace MinPlan
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage(); 
+                app.UseDeveloperExceptionPage();
             }
             else
             {

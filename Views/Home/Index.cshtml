@@ -7,9 +7,17 @@
     </div>
     @if (User.Identity.IsAuthenticated)
     {
-        <div>Vælkømmin&nbsp;@User.Identity.Name</div>
+    <div>Vælkømmin&nbsp;@User.Identity.Name&nbsp;du er 
+    @if (User.IsInRole("administrator"))
+    {
+        <span>root</span> }
+    else
+    {
+        <span>en vanlig bruker</span>
+    } 
+    </div>
         <div>
-            <img src="@User.Claims.FirstOrDefault(x=> x.Type == "picture")?.Value" />
+            <img src="@User.Claims.FirstOrDefault(x => x.Type == "picture")?.Value" />
         </div>
 
         <table class="table">
@@ -26,12 +34,12 @@
             <tbody>
                 @foreach (var claim in User.Claims)
                 {
-                <tr>
-                    <td>@claim.Type</td>
-                    <td>@claim.Value</td>
-                    <td>@claim.Issuer</td>
-                    <td>@claim.OriginalIssuer</td>
-                </tr>
+                    <tr>
+                        <td>@claim.Type</td>
+                        <td>@claim.Value</td>
+                        <td>@claim.Issuer</td>
+                        <td>@claim.OriginalIssuer</td>
+                    </tr>
                 }
             </tbody>
         </table>

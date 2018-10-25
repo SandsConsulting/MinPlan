@@ -12,12 +12,6 @@ namespace MinPlan
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                //.UseKestrel(options =>
-                //{
-                //    options.ConfigureEndpointDefaults(x => { x.UseHttps(); });
-                //    options.ListenLocalhost(9999);
-                //})
-            ;
+                .UseStartup<Startup>();
     }
 }

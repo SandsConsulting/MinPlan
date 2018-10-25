@@ -17,10 +17,6 @@ namespace MinPlan.Controllers
         [Authorize]
         public async Task Logout()
         {
-            await HttpContext.SignOutAsync(new AuthenticationProperties
-            {
-                RedirectUri = Url.Action("Index", "Home")
-            });
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
         }
