@@ -20,6 +20,8 @@
             <img src="@User.Claims.FirstOrDefault(x => x.Type == "picture")?.Value" />
         </div>
 
+        <span>@ViewBag.UserInfo</span>
+
         <table class="table">
             <thead>
                 <tr>

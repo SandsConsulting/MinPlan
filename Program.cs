@@ -17,6 +17,7 @@ namespace MinPlan
 #if DEBUG
             builder.UseKestrel(options =>
             {
+                options.ConfigureEndpointDefaults(config => config.UseHttps());
                 options.ListenLocalhost(9999);
             });
 #endif

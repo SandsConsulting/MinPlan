@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +14,25 @@ namespace MinPlan.Controllers
             {
                 string accessToken = await HttpContext.GetTokenAsync("access_token");
                 string idToken = await HttpContext.GetTokenAsync("id_token");
+#if DEBUG
+                string content = await GetUserInfo(accessToken);
+                ViewBag.UserInfo = content;
+#endif
             }
 
             return View();
+        }
+
+        private static async Task<string> GetUserInfo(string accessToken)
+        {
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new System.Uri(@"http://localhost:5000")
+            };
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+            var result = await client.GetAsync("/connect/userinfo");
+            var content = await result.Content.ReadAsStringAsync();
+            return content;
         }
 
         public IActionResult Error()

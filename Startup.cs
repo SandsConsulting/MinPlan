@@ -48,49 +48,23 @@ namespace MinPlan
             /*
              * IDENTITY SERVER
              */
-            //.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-            //{
-            //    options.RequireHttpsMetadata = HostingEnvironment.IsProduction();
-            //    options.Authority = Configuration["IdentityServer:Domain"];
-            //    options.ClientId = Configuration["IdentityServer:ClientId"];
-            //    options.ClientSecret = Configuration["IdentityServer:ClientSecret"];
-            //    options.ResponseType = "code";
-            //    options.Scope.Clear();
-            //    options.Scope.Add("openid");
-            //    options.Scope.Add("profile");
-            //    options.Scope.Add("email");
-            //    options.Scope.Add("role");
-            //    options.CallbackPath = new PathString("/signin-oidc");
-            //    options.TokenValidationParameters.NameClaimType = "name";
-            //    options.TokenValidationParameters.RoleClaimType = "role";
-            //    options.SaveTokens = true;
-            //    //options.GetClaimsFromUserInfoEndpoint = true;
-            //    options.Events.OnRemoteFailure = context =>
-            //    {
-            //        context.HandleResponse();
-            //        context.Response.Redirect("/");
-            //        return Task.FromResult<object>(null);
-            //    };
-            //})
-
-            /*
-             * Idfy
-             */
             .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
             {
                 options.RequireHttpsMetadata = HostingEnvironment.IsProduction();
-                options.Authority = Configuration["Idfy:Domain"];
-                options.ClientId = Configuration["Idfy:ClientId"];
-                options.ClientSecret = Configuration["Idfy:ClientSecret"];
-                options.ResponseType = "code id_token";
+                options.Authority = Configuration["IdentityServer:Domain"];
+                options.ClientId = Configuration["IdentityServer:ClientId"];
+                options.ClientSecret = Configuration["IdentityServer:ClientSecret"];
+                options.ResponseType = "code";
                 options.Scope.Clear();
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
+                options.Scope.Add("email");
+                options.Scope.Add("role");
                 options.CallbackPath = new PathString("/signin-oidc");
                 options.TokenValidationParameters.NameClaimType = "name";
                 options.TokenValidationParameters.RoleClaimType = "role";
                 options.SaveTokens = true;
-                options.GetClaimsFromUserInfoEndpoint = true;
+                //options.GetClaimsFromUserInfoEndpoint = true;
                 options.Events.OnRemoteFailure = context =>
                 {
                     context.HandleResponse();
@@ -98,6 +72,32 @@ namespace MinPlan
                     return Task.FromResult<object>(null);
                 };
             })
+
+            /*
+             * Idfy
+             */
+            //.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+            //{
+            //    options.RequireHttpsMetadata = HostingEnvironment.IsProduction();
+            //    options.Authority = Configuration["Idfy:Domain"];
+            //    options.ClientId = Configuration["Idfy:ClientId"];
+            //    options.ClientSecret = Configuration["Idfy:ClientSecret"];
+            //    options.ResponseType = "code id_token";
+            //    options.Scope.Clear();
+            //    options.Scope.Add("openid");
+            //    options.Scope.Add("profile");
+            //    options.CallbackPath = new PathString("/signin-oidc");
+            //    options.TokenValidationParameters.NameClaimType = "name";
+            //    options.TokenValidationParameters.RoleClaimType = "role";
+            //    options.SaveTokens = true;
+            //    options.GetClaimsFromUserInfoEndpoint = true;
+            //    options.Events.OnRemoteFailure = context =>
+            //    {
+            //        context.HandleResponse();
+            //        context.Response.Redirect("/");
+            //        return Task.FromResult<object>(null);
+            //    };
+            //})
 
             /*
             * AZURE AD
