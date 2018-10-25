@@ -12,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MinPlan
@@ -58,19 +60,21 @@ namespace MinPlan
                 options.Scope.Clear();
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
+                options.Scope.Add("offline_access");
                 options.Scope.Add("email");
                 options.Scope.Add("role");
                 options.CallbackPath = new PathString("/signin-oidc");
                 options.TokenValidationParameters.NameClaimType = "name";
                 options.TokenValidationParameters.RoleClaimType = "role";
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.ClaimActions.MapJsonKey("role", "role");
                 options.SaveTokens = true;
-                //options.GetClaimsFromUserInfoEndpoint = true;
-                options.Events.OnRemoteFailure = context =>
-                {
-                    context.HandleResponse();
-                    context.Response.Redirect("/");
-                    return Task.FromResult<object>(null);
-                };
+                //options.Events.OnRemoteFailure = context =>
+                //{
+                //    context.HandleResponse();
+                //    context.Response.Redirect("/");
+                //    return Task.FromResult<object>(null);
+                //};
             })
 
             /*
@@ -185,3 +189,4 @@ namespace MinPlan
         }
     }
 }
+

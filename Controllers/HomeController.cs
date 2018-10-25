@@ -14,13 +14,21 @@ namespace MinPlan.Controllers
             {
                 string accessToken = await HttpContext.GetTokenAsync("access_token");
                 string idToken = await HttpContext.GetTokenAsync("id_token");
-#if DEBUG
-                string content = await GetUserInfo(accessToken);
-                ViewBag.UserInfo = content;
-#endif
+                string refreshToken = await HttpContext.GetTokenAsync("refresh_token");
+
+                ViewBag.AccessToken = accessToken;
+                ViewBag.IdToken = idToken;
+                ViewBag.RefreshToken = refreshToken;
             }
 
             return View();
+        }
+
+        public async Task<JsonResult> RefreshUserInfo()
+        {
+            string accessToken = await HttpContext.GetTokenAsync("access_token");
+                
+            return Json(await GetUserInfo(accessToken));
         }
 
         private static async Task<string> GetUserInfo(string accessToken)

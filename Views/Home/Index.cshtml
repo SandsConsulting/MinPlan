@@ -7,20 +7,23 @@
     </div>
     @if (User.Identity.IsAuthenticated)
     {
-    <div>Vælkømmin&nbsp;@User.Identity.Name&nbsp;du er 
-    @if (User.IsInRole("administrator"))
-    {
-        <span>root</span> }
-    else
-    {
-        <span>en vanlig bruker</span>
-    } 
-    </div>
+        <div>
+            Vælkømmin&nbsp;@User.Identity.Name&nbsp;du er
+            @if (User.IsInRole("administrator"))
+            {
+                <span>root</span> }
+            else
+            {
+                <span>en vanlig bruker</span>
+            }
+        </div>
         <div>
             <img src="@User.Claims.FirstOrDefault(x => x.Type == "picture")?.Value" />
         </div>
-
-        <span>@ViewBag.UserInfo</span>
+        <div><span>access_token : &nbsp;</span><span>@ViewBag.AccessToken</span></div><br/>
+        <div><span>id_token : &nbsp;</span><span>@ViewBag.IdToken</span></div><br />
+        <div><span>refresh_token : &nbsp;</span><span>@ViewBag.RefreshToken</span></div><br />
+        <div><div><button onclick="refresh_userinfo()">get user info</button></div><span id="userinfo">@ViewBag.UserInfo</span></div><br />
 
         <table class="table">
             <thead>
@@ -47,3 +50,13 @@
         </table>
     }
 </div>
+@section Scripts{
+    <script>
+        function refresh_userinfo() {
+            $.getJSON('https://localhost:9999/home/refreshuserinfo', function (data) {
+                $('#userinfo').text(data);
+            });
+        }
+    </script>
+}
+
