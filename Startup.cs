@@ -69,12 +69,12 @@ namespace MinPlan
                 options.GetClaimsFromUserInfoEndpoint = true;
                 options.ClaimActions.MapJsonKey("role", "role");
                 options.SaveTokens = true;
-                //options.Events.OnRemoteFailure = context =>
-                //{
-                //    context.HandleResponse();
-                //    context.Response.Redirect("/");
-                //    return Task.FromResult<object>(null);
-                //};
+                options.Events.OnRemoteFailure = context =>
+                {
+                    context.HandleResponse();
+                    context.Response.Redirect("/");
+                    return Task.FromResult<object>(null);
+                };
             })
 
             /*
@@ -106,18 +106,23 @@ namespace MinPlan
             /*
             * AZURE AD
             */
-            //.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-            //{
-            //    options.Authority = Configuration["AzureAD:Domain"];
-            //    options.ClientId = Configuration["AzureAD:ClientId"];
-            //    options.ClientSecret = Configuration["AzureAD:ClientSecret"];
-            //    options.ResponseType = OpenIdConnectResponseType.Code;
-            //    options.Scope.Clear();
-            //    options.Scope.Add("openid");
-            //    options.Scope.Add("profile");
-            //    options.CallbackPath = new PathString("/signin-oidc");
-            //    options.TokenValidationParameters.NameClaimType = "name";
-            //})
+            .AddOpenIdConnect("azure", options =>
+            {
+                options.Authority = Configuration["AzureAD:Domain"];
+                options.ClientId = Configuration["AzureAD:ClientId"];
+                options.ClientSecret = Configuration["AzureAD:ClientSecret"];
+                options.ResponseType = "code";
+                options.Scope.Clear();
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.Scope.Add("offline_access");
+                options.Scope.Add("email");
+                options.Scope.Add("role");
+                options.SaveTokens = true;
+                options.CallbackPath = new PathString("/signin-oidc-azure");
+                options.TokenValidationParameters.NameClaimType = "name";
+                options.TokenValidationParameters.RoleClaimType = "role";
+            })
 
             /*
              * AUTH0 

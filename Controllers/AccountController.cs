@@ -14,11 +14,17 @@ namespace MinPlan.Controllers
             await HttpContext.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties() { RedirectUri = returnUrl });
         }
 
+        public async Task Login_Azure(string returnUrl = "/")
+        {
+            await HttpContext.ChallengeAsync("azure", new AuthenticationProperties() { RedirectUri = returnUrl });
+        }
+
         [Authorize]
         public async Task Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            //await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            //await HttpContext.SignOutAsync("azure");
         }
 
         [Authorize]
