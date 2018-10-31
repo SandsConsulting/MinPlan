@@ -11,7 +11,7 @@ namespace MinPlan.Controllers
     {
         public async Task Login(string returnUrl = "/")
         {
-            await HttpContext.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties() { RedirectUri = returnUrl });
+            await HttpContext.ChallengeAsync("auth0", new AuthenticationProperties() { RedirectUri = returnUrl });
         }
 
         public async Task Login_Azure(string returnUrl = "/")
@@ -19,12 +19,16 @@ namespace MinPlan.Controllers
             await HttpContext.ChallengeAsync("azure", new AuthenticationProperties() { RedirectUri = returnUrl });
         }
 
+       public async Task Login_Idfy(string returnUrl = "/")
+        {
+            await HttpContext.ChallengeAsync("idfy", new AuthenticationProperties() { RedirectUri = returnUrl });
+        }
+
         [Authorize]
         public async Task Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme, new AuthenticationProperties() { RedirectUri = "/" });
             //await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
-            //await HttpContext.SignOutAsync("azure");
         }
 
         [Authorize]

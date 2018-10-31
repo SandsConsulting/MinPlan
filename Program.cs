@@ -14,13 +14,6 @@ namespace MinPlan
         {
             var builder = WebHost.CreateDefaultBuilder(args)
                  .UseStartup<Startup>();
-#if DEBUG
-            builder.UseKestrel(options =>
-            {
-                options.ConfigureEndpointDefaults(config => config.UseHttps());
-                options.ListenLocalhost(9999);
-            });
-#endif
             return builder;
         }
     }

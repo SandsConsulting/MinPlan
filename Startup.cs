@@ -50,58 +50,49 @@ namespace MinPlan
             /*
              * IDENTITY SERVER
              */
-            .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-            {
-                options.RequireHttpsMetadata = HostingEnvironment.IsProduction();
-                options.Authority = Configuration["IdentityServer:Domain"];
-                options.ClientId = Configuration["IdentityServer:ClientId"];
-                options.ClientSecret = Configuration["IdentityServer:ClientSecret"];
-                options.ResponseType = "code";
-                options.Scope.Clear();
-                options.Scope.Add("openid");
-                options.Scope.Add("profile");
-                options.Scope.Add("offline_access");
-                options.Scope.Add("email");
-                options.Scope.Add("role");
-                options.CallbackPath = new PathString("/signin-oidc");
-                options.TokenValidationParameters.NameClaimType = "name";
-                options.TokenValidationParameters.RoleClaimType = "role";
-                options.GetClaimsFromUserInfoEndpoint = true;
-                options.ClaimActions.MapJsonKey("role", "role");
-                options.SaveTokens = true;
-                options.Events.OnRemoteFailure = context =>
-                {
-                    context.HandleResponse();
-                    context.Response.Redirect("/");
-                    return Task.FromResult<object>(null);
-                };
-            })
+            // .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+            // {
+            //     options.RequireHttpsMetadata = HostingEnvironment.IsProduction();
+            //     options.Authority = Configuration["IdentityServer:Domain"];
+            //     options.ClientId = Configuration["IdentityServer:ClientId"];
+            //     options.ClientSecret = Configuration["IdentityServer:ClientSecret"];
+            //     options.ResponseType = "code";
+            //     options.Scope.Clear();
+            //     options.Scope.Add("openid");
+            //     options.Scope.Add("profile");
+            //     options.Scope.Add("offline_access");
+            //     options.Scope.Add("email");
+            //     options.Scope.Add("role");
+            //     options.CallbackPath = new PathString("/signin-oidc");
+            //     options.TokenValidationParameters.NameClaimType = "name";
+            //     options.TokenValidationParameters.RoleClaimType = "role";
+            //     options.GetClaimsFromUserInfoEndpoint = true;
+            //     options.ClaimActions.MapJsonKey("role", "role");
+            //     options.SaveTokens = true;
+            //     options.Events.OnRemoteFailure = context =>
+            //     {
+            //         context.HandleResponse();
+            //         context.Response.Redirect("/");
+            //         return Task.FromResult<object>(null);
+            //     };
+            // })
 
             /*
              * Idfy
              */
-            //.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-            //{
-            //    options.RequireHttpsMetadata = HostingEnvironment.IsProduction();
-            //    options.Authority = Configuration["Idfy:Domain"];
-            //    options.ClientId = Configuration["Idfy:ClientId"];
-            //    options.ClientSecret = Configuration["Idfy:ClientSecret"];
-            //    options.ResponseType = "code id_token";
-            //    options.Scope.Clear();
-            //    options.Scope.Add("openid");
-            //    options.Scope.Add("profile");
-            //    options.CallbackPath = new PathString("/signin-oidc");
-            //    options.TokenValidationParameters.NameClaimType = "name";
-            //    options.TokenValidationParameters.RoleClaimType = "role";
-            //    options.SaveTokens = true;
-            //    options.GetClaimsFromUserInfoEndpoint = true;
-            //    options.Events.OnRemoteFailure = context =>
-            //    {
-            //        context.HandleResponse();
-            //        context.Response.Redirect("/");
-            //        return Task.FromResult<object>(null);
-            //    };
-            //})
+            .AddOpenIdConnect("idfy", options =>
+            {
+               options.RequireHttpsMetadata = HostingEnvironment.IsProduction();
+               options.Authority = Configuration["Idfy:Domain"];
+               options.ClientId = Configuration["Idfy:ClientId"];
+               options.ClientSecret = Configuration["Idfy:ClientSecret"];
+               options.ResponseType = "code";
+               options.CallbackPath = new PathString("/signin-idfy");
+               options.TokenValidationParameters.NameClaimType = "name";
+               options.TokenValidationParameters.RoleClaimType = "role";
+               options.SaveTokens = true;
+               options.GetClaimsFromUserInfoEndpoint = true;
+            })
 
             /*
             * AZURE AD
@@ -111,52 +102,30 @@ namespace MinPlan
                 options.Authority = Configuration["AzureAD:Domain"];
                 options.ClientId = Configuration["AzureAD:ClientId"];
                 options.ClientSecret = Configuration["AzureAD:ClientSecret"];
-                options.ResponseType = "code";
-                options.Scope.Clear();
-                options.Scope.Add("openid");
-                options.Scope.Add("profile");
+                options.ResponseType = "code"; 
                 options.Scope.Add("offline_access");
                 options.Scope.Add("email");
                 options.Scope.Add("role");
-                options.SaveTokens = true;
                 options.CallbackPath = new PathString("/signin-oidc-azure");
                 options.TokenValidationParameters.NameClaimType = "name";
                 options.TokenValidationParameters.RoleClaimType = "role";
+                options.SaveTokens = true;
+                options.GetClaimsFromUserInfoEndpoint = true;
             })
 
             /*
              * AUTH0 
              */
-            //.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-            //{
-            //    options.Authority = Configuration["Auth0:Domain"];
-            //    options.ClientId = Configuration["Auth0:ClientId"];
-            //    options.ClientSecret = Configuration["Auth0:ClientSecret"];
-            //    options.ResponseType = "code";
-            //    options.Scope.Clear();
-            //    options.Scope.Add("openid");
-            //    options.Scope.Add("profile");
-            //    options.CallbackPath = new PathString("/signin-auth0");
-            //    options.TokenValidationParameters.NameClaimType = "name";
-            //    options.GetClaimsFromUserInfoEndpoint = true;
-            //    //options.Events.OnRedirectToIdentityProviderForSignOut = context =>
-            //    //    {
-            //    //        var logoutUri = $"{Configuration["Auth0:Domain"]}/v2/logout?client_id={Configuration["Auth0:ClientId"]}";
-            //    //        var postLogoutUri = context.Properties.RedirectUri;
-            //    //        if (!string.IsNullOrEmpty(postLogoutUri))
-            //    //        {
-            //    //            if (postLogoutUri.StartsWith("/"))
-            //    //            {
-            //    //                var request = context.Request;
-            //    //                postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
-            //    //            }
-            //    //            logoutUri += $"&returnTo={ Uri.EscapeDataString(postLogoutUri)}";
-            //    //        }
-            //    //        context.Response.Redirect(logoutUri);
-            //    //        context.HandleResponse();
-            //    //        return Task.CompletedTask;
-            //    //    };
-            //})
+            .AddOpenIdConnect("auth0", options =>
+            {
+               options.Authority = Configuration["Auth0:Domain"];
+               options.ClientId = Configuration["Auth0:ClientId"];
+               options.ClientSecret = Configuration["Auth0:ClientSecret"];
+               options.ResponseType = "code";
+               options.CallbackPath = new PathString("/signin-auth0");
+               options.TokenValidationParameters.NameClaimType = "name";
+               options.GetClaimsFromUserInfoEndpoint = true;
+            })
 
             .AddCookie();
 

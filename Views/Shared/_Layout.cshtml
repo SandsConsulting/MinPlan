@@ -31,6 +31,7 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-area="" asp-controller="Exploit" asp-action="Index">Exploit</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if (User.Identity.IsAuthenticated)
@@ -39,8 +40,9 @@
                     }
                     else
                     {
-                        <li><a id="qsLoginBtn" asp-controller="Account" asp-action="Login">Login</a></li>
+                        <li><a id="qsLoginBtn" asp-controller="Account" asp-action="Login">Login Auth0</a></li>
                         <li><a id="qsLoginBtnAzure" asp-controller="Account" asp-action="Login_Azure">Login Azure AD</a></li>
+                        <li><a id="qsLoginBtnIdfy" asp-controller="Account" asp-action="Login_Idfy">Login Idfy (bankid) </a></li>
                     }
                 </ul>
             </div>

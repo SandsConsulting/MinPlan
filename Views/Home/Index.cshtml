@@ -18,13 +18,8 @@
             }
         </div>
         <div>
-            <img src="@User.Claims.FirstOrDefault(x => x.Type == "picture")?.Value" />
+            <img src='@User.Claims.FirstOrDefault(x => x.Type == "picture")?.Value' width="100px" height="100px"/>
         </div>
-        <div><span>access_token : </span><span id="access_token">@ViewBag.AccessToken</span></div><br/>
-        <div><span>id_token : </span><span id="id_token">@ViewBag.IdToken</span></div><br />
-        <div><div><button onclick="get_token()">use refresh token</button></div><span>refresh_token : </span><span id="refresh_token">@ViewBag.RefreshToken</span></div><br />
-        <div><div><button onclick="get_userinfo()">get user info</button></div><span id="userinfo">@ViewBag.UserInfo</span></div><br />
-
         <table class="table">
             <thead>
                 <tr>
@@ -42,24 +37,26 @@
                     <tr>
                         <td>@claim.Type</td>
                         <td>@claim.Value</td>
-                        <td>@claim.Issuer</td>
-                        <td>@claim.OriginalIssuer</td>
                     </tr>
                 }
             </tbody>
         </table>
+        <div><span>access_token : </span><span id="access_token">@ViewBag.AccessToken</span></div><br/>
+        <div><span>id_token : </span><span id="id_token">@ViewBag.IdToken</span></div><br />
+        <div><div><button onclick="get_token()">use refresh token</button></div><span>refresh_token : </span><span id="refresh_token">@ViewBag.RefreshToken</span></div><br />
+        <div><div><button onclick="get_userinfo()">get user info</button></div><span id="userinfo">@ViewBag.UserInfo</span></div><br />
     }
 </div>
 @section Scripts{
     <script>
         function get_userinfo() {
-            $.getJSON('https://localhost:9999/home/getuserinfo', function (data) {
+            $.getJSON('@Url.Action("GetUserInfo", "Home")', function (data) {
                 $('#userinfo').text(data);
             });
         }
 
         function get_token() {
-            $.getJSON('https://localhost:9999/home/gettoken', function (data) {
+            $.getJSON('@Url.Action("GetToken", "Home")', function (data) {
                 var json = JSON.parse(data)
                 $('#access_token').text(json.access_token);
                 $('#id_token').text(json.id_token);
