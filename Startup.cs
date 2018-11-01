@@ -82,16 +82,22 @@ namespace MinPlan
              */
             .AddOpenIdConnect("idfy", options =>
             {
-               options.RequireHttpsMetadata = HostingEnvironment.IsProduction();
-               options.Authority = Configuration["Idfy:Domain"];
-               options.ClientId = Configuration["Idfy:ClientId"];
-               options.ClientSecret = Configuration["Idfy:ClientSecret"];
-               options.ResponseType = "code";
-               options.CallbackPath = new PathString("/signin-idfy");
-               options.TokenValidationParameters.NameClaimType = "name";
-               options.TokenValidationParameters.RoleClaimType = "role";
-               options.SaveTokens = true;
-               options.GetClaimsFromUserInfoEndpoint = true;
+                options.RequireHttpsMetadata = HostingEnvironment.IsProduction();
+                options.Authority = Configuration["Idfy:Domain"];
+                options.ClientId = Configuration["Idfy:ClientId"];
+                options.ClientSecret = Configuration["Idfy:ClientSecret"];
+                options.ResponseType = "code";
+                // options.Scope.Add("offline_access");
+                options.CallbackPath = new PathString("/signin-idfy");
+                options.TokenValidationParameters.NameClaimType = "name";
+                options.TokenValidationParameters.RoleClaimType = "role";
+                options.SaveTokens = true;
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.Events.OnTokenValidated = ctx =>
+                {
+                    ((ClaimsIdentity)ctx.Principal.Identity).AddClaim(new Claim("sts_config", "Idfy"));
+                    return Task.CompletedTask;
+                };
             })
 
             /*
@@ -111,6 +117,11 @@ namespace MinPlan
                 options.TokenValidationParameters.RoleClaimType = "role";
                 options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
+                options.Events.OnTokenValidated = ctx =>
+                {
+                    ((ClaimsIdentity)ctx.Principal.Identity).AddClaim(new Claim("sts_config", "AzureAD"));
+                    return Task.CompletedTask;
+                };
             })
 
             /*
@@ -118,13 +129,20 @@ namespace MinPlan
              */
             .AddOpenIdConnect("auth0", options =>
             {
-               options.Authority = Configuration["Auth0:Domain"];
-               options.ClientId = Configuration["Auth0:ClientId"];
-               options.ClientSecret = Configuration["Auth0:ClientSecret"];
-               options.ResponseType = "code";
-               options.CallbackPath = new PathString("/signin-auth0");
-               options.TokenValidationParameters.NameClaimType = "name";
-               options.GetClaimsFromUserInfoEndpoint = true;
+                options.Authority = Configuration["Auth0:Domain"];
+                options.ClientId = Configuration["Auth0:ClientId"];
+                options.ClientSecret = Configuration["Auth0:ClientSecret"];
+                options.ResponseType = "code";
+                options.Scope.Add("offline_access");
+                options.CallbackPath = new PathString("/signin-auth0");
+                options.TokenValidationParameters.NameClaimType = "name";
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.SaveTokens = true;
+                options.Events.OnTokenValidated = ctx =>
+                {
+                    ((ClaimsIdentity)ctx.Principal.Identity).AddClaim(new Claim("sts_config", "Auth0"));
+                    return Task.CompletedTask;
+                };
             })
 
             .AddCookie();

@@ -41,7 +41,9 @@ namespace MinPlan.Controllers
 
         public async Task<JsonResult> GetUserInfo()
         {
-            var discoClient = new DiscoveryClient(_configuration["AzureAD:Domain"]);
+            var sts_config = User.Claims.FirstOrDefault(claim => claim.Type == "sts_config")?.Value;
+
+            var discoClient = new DiscoveryClient(_configuration[$"{sts_config}:Domain"]);
             discoClient.Policy.ValidateIssuerName = false;
             discoClient.Policy.ValidateEndpoints = false;
             var disco = await discoClient.GetAsync();
@@ -57,7 +59,9 @@ namespace MinPlan.Controllers
 
         public async Task<JsonResult> GetToken()
         {
-            var discoClient = new DiscoveryClient(_configuration["AzureAD:Domain"]);
+            var sts_config = User.Claims.FirstOrDefault(claim => claim.Type == "sts_config")?.Value;
+
+            var discoClient = new DiscoveryClient(_configuration[$"{sts_config}:Domain"]);
             discoClient.Policy.ValidateIssuerName = false;
             discoClient.Policy.ValidateEndpoints = false;
             var disco = await discoClient.GetAsync();
@@ -65,8 +69,8 @@ namespace MinPlan.Controllers
             var result = await new HttpClient().PostAsync(disco.TokenEndpoint, new FormUrlEncodedContent(new[]
                                                                                 {
                                                                                     new KeyValuePair<string, string>("grant_type", "refresh_token"),
-                                                                                    new KeyValuePair<string, string>("client_id", _configuration["AzureAD:ClientId"]),
-                                                                                    new KeyValuePair<string, string>("client_secret", _configuration["AzureAD:ClientSecret"]),
+                                                                                    new KeyValuePair<string, string>("client_id", _configuration[$"{sts_config}:ClientId"]),
+                                                                                    new KeyValuePair<string, string>("client_secret", _configuration[$"{sts_config}:ClientSecret"]),
                                                                                     new KeyValuePair<string, string>("refresh_token", await HttpContext.GetTokenAsync("refresh_token")),
                                                                                     new KeyValuePair<string, string>("scope", "openid profile"),
                                                                                 }));
