@@ -3,14 +3,11 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <UserSecretsId>4ff74c9d-db5a-4a02-ace6-60d19d760544</UserSecretsId>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants></DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.AzureKeyVault.HostingStartup" Version="2.0.4" />
-     <PackageReference Include="IdentityModel" Version="3.10.5" />
+    <PackageReference Include="IdentityModel" Version="3.10.5" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services" />
